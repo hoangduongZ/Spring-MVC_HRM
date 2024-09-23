@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+          integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js" integrity="sha512-KFHXdr2oObHKI9w4Hv1XPKc898mE4kgYx58oqsc/JqqdLMDI4YjOLzom+EMlW8HFUd0QfjfAvxSL6sEq/a42fQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>Title</title>
+    <style>
+        label.error{
+            color: red;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body class="flex flex-col">
+<div th:replace="fragments/header :: header"></div>
+<main class="flex grow">
+    <div th:replace="fragments/aside :: aside"></div>
+    <section layout:fragment="content"></section>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebarToggle = document.querySelector('[data-collapse-toggle="dropdown"]');
+        const sidebarDropdown = document.querySelector('#dropdown-list');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebarDropdown.classList.toggle('hidden');
+        });
+
+        const departmentToggle = document.querySelector('[data-collapse-toggle="department-dropdown"]');
+        const departmentDropdown = document.querySelector('#department-dropdown');
+        departmentToggle.addEventListener('click', () => {
+            departmentDropdown.classList.toggle('hidden');
+        });
+    });
+</script>
+<script th:src="@{/js/validate_form.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/fetch.js}"></script>
+</body>
+</html>

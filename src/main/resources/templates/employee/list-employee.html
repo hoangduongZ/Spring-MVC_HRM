@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<section layout:fragment="content" class="p-5 main-content grow border-t border-slate-200">
+    <div class="card bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="card-header text-2xl font-medium border-b p-4">Employee List</div>
+        <div class="card-body p-4">
+            <div class="flex justify-end p-4">
+                <form th:action="@{/employees}" method="get"
+                      class="space-x-2 search-box flex items-center bg-white rounded-lg p-2">
+                    <div class="search border rounded flex">
+                        <i class="fa-solid fa-magnifying-glass text-gray-600 bg-gray-100 p-3 hover:bg-gray-200"></i>
+                        <input
+                                id="keyword" name="keyword" autocomplete="keyword"
+                                type="text"
+                                placeholder="User Search"
+                                class="p-2 w-80 border-gray-300 rounded-tr rounded-br focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                th:value="${keyword}"
+                        />
+                    </div>
+
+                    <div class="filter flex rounded border">
+                        <div class="filter flex items-center bg-gray-100 p-2 border-r flex">
+                            <i class="fa-solid fa-filter text-gray-600"></i>
+                            <span class="text-gray-600 ml-1">Filter By</span>
+                        </div>
+                        <select name="sort" class="border-gray-300 p-2 rounded-br rounded-tr">
+                            <option value="firstName" th:selected="${sort == 'firstName'}">Name</option>
+                            <option value="dob" th:selected="${sort == 'dob'}">Date of Birth</option>
+                            <option value="address" th:selected="${sort == 'address'}">Address</option>
+                            <option value="phone" th:selected="${sort == 'phone'}">Phone Number</option>
+                        </select>
+
+                        <select name="order" class="border-gray-300 p-2 rounded-br rounded-tr">
+                            <option value="asc" th:selected="${order == 'asc'}">Ascending</option>
+                            <option value="desc" th:selected="${order == 'desc'}">Descending</option>
+                        </select>
+                    </div>
+
+                    <button
+                            type="submit"
+                            class="bg-sky-500 text-white rounded py-2 px-3 hover:bg-sky-600 transition duration-200"
+                    >
+                        Search
+                    </button>
+                </form>
+            </div>
+            <table class="min-w-full table-auto border-collapse border border-gray-300" th:unless="${totalPages == 0}"
+                   th:object="${employees}">
+                <thead class="bg-gray-200">
+                <tr>
+                    <th class="px-4 py-2 border border-gray-300 text-left text-gray-700">#</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left text-gray-700">Name</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left text-gray-700">Date of Birth</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left text-gray-700">Address</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left text-gray-700">Phone Number</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left text-gray-700">Department</th>
+                    <th class="px-4 py-2 border border-gray-300 text-left text-gray-700">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="employee, iterStat : ${employees}"
+                    th:classappend="${iterStat.even} ? 'bg-white' : 'bg-gray-100'">
+                    <td class="px-4 py-2 border border-gray-300" th:text="${iterStat.index + 1}"></td>
+                    <td class="px-4 py-2 border border-gray-300" th:text="${employee.firstName + ' ' + employee.lastName}"></td>
+                    <td class="px-4 py-2 border border-gray-300" th:text="${employee.dob}"></td>
+                    <td class="px-4 py-2 border border-gray-300" th:text="${employee.address}"></td>
+                    <td class="px-4 py-2 border border-gray-300" th:text="${employee.phone}"></td>
+                    <td class="px-4 py-2 border border-gray-300" th:text="${employee.department.name}"></td>
+                    <td class="px-4 py-2 border border-gray-300 space-x-2">
+                        <button class="bg-sky-500 text-white px-3 py-1 rounded-md hover:bg-sky-600 view-employee"
+                                th:data-action-id="${employee.id}">
+                            View
+                        </button>
+                        <button class="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 edit-employee"
+                                th:data-action-id="${employee.id}">
+                            Edit
+                        </button>
+                        <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-700 delete-employee">
+                            Delete
+                        </button>
+                        <div class="modal modal-delete inset-0 bg-slate-300 fixed bg-opacity-50 z-50 hidden">
+                            <div class="h-screen flex justify-center items-center">
+                                <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                                        <div class="sm:flex sm:items-start">
+                                            <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24"
+                                                     stroke-width="1.5"
+                                                     stroke="currentColor" aria-hidden="true">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                                                </svg>
+                                            </div>
+                                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                                <h3 class="text-base font-semibold leading-6 text-gray-900">Delete employee</h3>
+                                                <div class="mt-2">
+                                                    <p class="text-sm text-gray-500">Are you sure you want to delete this employee? All of your data will be permanently removed. This action cannot be undone.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                                        <a th:href="@{/employees/delete/{id}(id=${employee.id})}"
+                                           class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">
+                                            Yes
+                                        </a>
+                                        <button class="close mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                                            No
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="card-footer p-3" th:if="${totalPages == 0}">
+                <p class="text-center text-gray-700">No employees found</p>
+            </div>
+            <div class="card-footer pagination p-3 flex justify-between items-center" th:if="${totalPages > 0}">
+                <!-- Show select page size -->
+                <div class="flex justify-between items-center">
+                    <div>
+                        <label for="pageSize" class="block text-sm font-medium text-gray-700 mb-2">Page Size:</label>
+                        <select id="pageSize" name="pageSize" class="p-2 border border-slate-300 rounded-md"
+                                onchange="window.location.href = '/employees?keyword=' + document.getElementById('keyword').value + '&page=0&size=' + this.value">
+                            <option th:each="size : ${pageSizes}" th:value="${size}" th:text="${size}"
+                                    th:selected="${size == pageSize}"></option>
+                        </select>
+                    </div>
+                </div>
+                <ul class="pagination-step flex justify-center items-center gap-2">
+                    <!-- Previous Page -->
+                    <li>
+                        <a class="p-3"
+                           th:href="@{/employees(keyword=${keyword}, page=${currentPage - 1}, size=${pageSize})}"
+                           th:classappend="${currentPage == 0} ? 'pointer-events-none text-slate-300' : ''">
+                            <i class="fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    <li th:each="pageNum : ${#numbers.sequence(0, totalPages - 1 < 0 ? 0 : totalPages - 1)}">
+                        <a class="p-3"
+                           th:href="@{/employees(keyword=${keyword}, sort=${sort}, order=${order}, page=${pageNum}, size=${pageSize})}"
+                           th:classappend="${pageNum == currentPage} ? 'inline-block text-center bg-blue-700 rounded-full w-12 h-12 text-white' : ''">
+                            <span th:text="${pageNum + 1}"></span>
+                        </a>
+                    </li>
+
+                    <!-- Next Page - Disabled if currentPage is the last page -->
+                    <li>
+                        <a class="p-3"
+                           th:href="@{/employees(keyword=${keyword}, sort=${sort}, order=${order}, page=${currentPage + 1}, size=${pageSize})}"
+                           th:classappend="${currentPage == totalPages - 1} ? 'pointer-events-none text-slate-300' : ''">
+                            <i class="fa-solid fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Show item 0-100 of 1000 -->
+                <div class="flex justify-center items-center gap-2">
+                    <span class="text-sm text-gray-700"
+                          th:text="|Show ${currentPage * pageSize + 1}-${(currentPage + 1) * pageSize} of ${totalElements}|">
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit -->
+    <div class="modal modal-edit inset-0 bg-slate-300 fixed bg-opacity-50 z-50 hidden">
+        <div class="h-screen flex justify-center items-center">
+            <div class="rounded-lg shadow modal-content border rounded bg-white w-1/2">
+                <div class="card-header flex justify-between p-3">
+                    <div class="header font-medium">Edit Employee</div>
+                    <button class="close font-medium"><i class="text-xl fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="card-body">
+                    <form class="py-3 form space-y-3 border-y border-slate-400" id="edit-form">
+                        <div class="form-group px-3">
+                            <label for="first-name-edit">First Name</label>
+                            <input type="text" id="first-name-edit" class="rounded w-full bg-white border h-11 p-2"
+                                   placeholder="Enter first name">
+                        </div>
+                        <div class="form-group px-3">
+                            <label for="last-name-edit">Last Name</label>
+                            <input type="text" id="last-name-edit" class="rounded w-full bg-white border h-11 p-2"
+                                   placeholder="Enter last name">
+                        </div>
+                        <div class="form-group px-3">
+                            <label for="dob-edit">Date of Birth</label>
+                            <input type="date" id="dob-edit" class="rounded w-full bg-white border h-11 p-2">
+                        </div>
+                        <div class="form-group px-3">
+                            <label for="address-edit">Address</label>
+                            <input type="text" id="address-edit" class="rounded w-full bg-white border h-11 p-2"
+                                   placeholder="Enter address">
+                        </div>
+                        <div class="form-group px-3">
+                            <label for="phone-edit">Phone Number</label>
+                            <input type="text" id="phone-edit" class="rounded w-full bg-white border h-11 p-2"
+                                   placeholder="Enter phone number">
+                        </div>
+                        <div class="form-group px-3">
+                            <label for="department-edit">Department</label>
+                            <select name="" id="department-edit" class="rounded w-full bg-white border h-11 p-2">
+                                <option value="">Select Department</option>
+                            </select>
+                        </div>
+                        <div class="card-footer flex justify-end p-3 gap-2">
+                            <button type="button" class="w-20 bg-red-400 p-3 rounded shadow close">Cancel</button>
+                            <button type="submit" class="w-20 shrink-0 bg-green-400 p-3 rounded shadow update">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal View -->
+    <div class="modal modal-view inset-0 bg-slate-300 fixed bg-opacity-50 z-50 hidden">
+        <div class="h-screen flex justify-center items-center">
+            <div class="rounded-lg shadow-lg modal-content border rounded bg-white w-1/2">
+                <div class="card-header flex justify-between p-3">
+                    <div class="header font-medium">View Employee</div>
+                    <button class="close font-medium"><i class="text-xl fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="card-body">
+                    <form class="py-3 form space-y-3 border-y border-slate-400">
+                        <div class="form-group px-3">
+                            <label>First Name</label>
+                            <input type="text" id="first-name-view" class="rounded w-full bg-white border h-11 p-2"
+                                   placeholder="Enter first name" readonly>
+                        </div>
+                        <div class="form-group px-3">
+                            <label>Last Name</label>
+                            <input type="text" id="last-name-view" class="rounded w-full bg-white border h-11 p-2"
+                                   placeholder="Enter last name" readonly>
+                        </div>
+                        <div class="form-group px-3">
+                            <label>Date of Birth</label>
+                            <input type="date" id="dob-view" class="rounded w-full bg-white border h-11 p-2"
+                                   readonly>
+                        </div>
+                        <div class="form-group px-3">
+                            <label>Address</label>
+                            <input type="text" id="address-view" class="rounded w-full bg-white border h-11 p-2"
+                                   placeholder="Enter address" readonly>
+                        </div>
+                        <div class="form-group px-3">
+                            <label>Phone Number</label>
+                            <input type="text" id="phone-view" class="rounded w-full bg-white border h-11 p-2"
+                                   placeholder="Enter phone number" readonly>
+                        </div>
+                        <div class="form-group px-3 pb-5">
+                            <label>Department</label>
+                            <input type="text" id="department-view" class="rounded w-full bg-white border h-11 p-2"
+                                   placeholder="Enter department" readonly>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"
+xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<aside id="sidebar-multi-level-sidebar"
+       class=" z-40 w-64 bg-[#f8f8f8] min-h-screen border-r border-slate-200" aria-label="Sidebar">
+  <div class="px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+    <ul class="space-y-2 ">
+      <li>
+        <a th:href="@{/dashboard}"
+           class="flex items-center p-2 text-blue-700 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+          <i class="fa-solid fa-gauge"></i>
+          <span class="ms-3">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <button type="button"
+                class="flex items-center w-full p-2 text-base text-blue-700 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                aria-controls="dropdown-example" data-collapse-toggle="dropdown">
+          <i class="fa-solid fa-chart-column"></i>
+          <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Employee manager</span>
+          <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+               viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2" d="m1 1 4 4 4-4" />
+          </svg>
+        </button>
+        <ul id="dropdown-list"  class="py-2 space-y-2 *:text-blue-700">
+          <li class="ml-5 flex items-center p-2 hover:bg-slate-300 gap-2">
+            <i class="fa-solid fa-list"></i>
+            <a th:href="@{/employees}" class="flex transition duration-75group dark:text-white">Employee List</a>
+          </li>
+          <li class="ml-5 flex items-center p-2 hover:bg-slate-300 gap-2">
+            <i class="fa-solid fa-plus"></i>
+            <a th:href="@{/employees/add}" class="flex transition duration-75group dark:text-white ">Add Employee </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <button type="button"
+                class="flex items-center w-full p-2 text-base text-blue-700 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                aria-controls="department-dropdown" data-collapse-toggle="department-dropdown">
+          <i class="fa-solid fa-building"></i>
+          <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Department Manager</span>
+          <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+               viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2" d="m1 1 4 4 4-4" />
+          </svg>
+        </button>
+        <ul id="department-dropdown" class="hidden py-2 space-y-2 text-blue-700">
+          <li class="ml-5 flex items-center p-2 hover:bg-slate-300 gap-2">
+            <i class="fa-solid fa-list"></i>
+            <a href="#" class="flex transition duration-75 group dark:text-white">Department List</a>
+          </li>
+          <li class="ml-5 flex items-center p-2 hover:bg-slate-300 gap-2">
+            <i class="fa-solid fa-plus"></i>
+            <a th:href="@{/departments}" class="flex transition duration-75 group dark:text-white">Add Department</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</aside>
+</body>
+</html>

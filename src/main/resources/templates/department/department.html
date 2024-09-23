@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<section layout:fragment="content" class="p-5 main-content grow border-t border-slate-200 h-[1px]">
+    <div class="card bg-white shadow-md rounded-lg overflow-hidden">
+        <div class="card-header text-2xl font-medium border-b p-4">Add Department</div>
+        <div class="card-body p-4">
+            <form th:action="@{/departments}" method="POST" id="add-department-form" class="space-y-4" th:object="${department}">
+                <div>
+                    <label for="department-name" class="block text-sm font-medium text-gray-700">Department Name</label>
+                    <input type="text" id="department-name" th:field="*{name}" required
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="Enter department name">
+                    <div th:if="${#fields.hasErrors('name')}" class="text-red-500 text-sm mt-1">
+                        <span th:errors="*{name}">Error message</span>
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit"
+                            class="inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Add Department
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <br>
+
+    <table class="min-w-full table-auto border-collapse border border-gray-300">
+        <thead class="bg-gray-200">
+        <tr>
+            <th class="px-4 py-2 border border-gray-300 text-left text-gray-700">#</th>
+            <th class="px-4 py-2 border border-gray-300 text-left text-gray-700">Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="dep, iterStat : ${departments}"
+            th:classappend="${iterStat.even} ? 'bg-white' : 'bg-gray-100'">
+            <td class="px-4 py-2 border border-gray-300" th:text="${iterStat.index + 1}"></td>
+            <td class="px-4 py-2 border border-gray-300" th:text="${dep.name}"></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

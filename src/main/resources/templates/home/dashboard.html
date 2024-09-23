@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content" class="bg-gray-100 main-content grow border-t border-slate-200">
+    <header class="bg-blue-600 text-white p-4">
+        <h1 class="text-2xl font-bold">Dashboard</h1>
+    </header>
+    <main class="p-6">
+        <div class="grid grid-cols-2 gap-6">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-xl font-semibold">Total Employees</h2>
+                <p th:text="${employeeCount}" class="text-3xl font-bold">{{employeeCount}}</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-xl font-semibold">Total Departments</h2>
+                <p th:text="${departmentCount}" class="text-3xl font-bold">{{departmentCount}}</p>
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-xl font-semibold">Total Active Account</h2>
+                <p th:text="5" class="text-3xl font-bold">{{departmentCount}}</p>
+            </div>
+
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h2 class="text-xl font-semibold">Total Non-Active Account</h2>
+                <p th:text="2" class="text-3xl font-bold">{{departmentCount}}</p>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>
