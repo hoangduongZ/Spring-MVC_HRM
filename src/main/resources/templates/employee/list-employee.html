@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/layout.html}">
+      layout:decorate="~{layouts/layout.html}" xmlns:sec="http://www.thymeleaf.org/extras/security">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -52,6 +52,10 @@
                     </button>
                 </form>
             </div>
+            <h1>User Authorities:</h1>
+            <ul>
+                <li th:each="authority : ${#authentication.getAuthorities()}" th:text="${authority}"></li>
+            </ul>
             <table class="min-w-full table-auto border-collapse border border-gray-300" th:unless="${totalPages == 0}"
                    th:object="${employees}">
                 <thead class="bg-gray-200">
@@ -80,10 +84,10 @@
                             View
                         </button>
                         <button class="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 edit-employee"
-                                th:data-action-id="${employee.id}">
+                                th:data-action-id="${employee.id}" sec:authorize="hasRole('ADMIN')">
                             Edit
                         </button>
-                        <button class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-700 delete-employee">
+                        <button sec:authorize="hasRole('ADMIN')" class="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-700 delete-employee">
                             Delete
                         </button>
                         <div class="modal modal-delete inset-0 bg-slate-300 fixed bg-opacity-50 z-50 hidden">

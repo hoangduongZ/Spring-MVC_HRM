@@ -89,7 +89,7 @@ public class EmployeeController {
         model.addAttribute("keyword", keyword == null ? "" : keyword);
         model.addAttribute("currentPage", page);
         model.addAttribute("sort", sort == null ? "firstName" : sort);
-        model.addAttribute("order", order == null ? "asc" : order);
+        model.addAttribute("order", order.equals("asc") ? "asc" : "desc");
         model.addAttribute("pageSize", size);
         model.addAttribute("totalPages", employees.getTotalPages());
         model.addAttribute("totalElements", employees.getTotalElements());

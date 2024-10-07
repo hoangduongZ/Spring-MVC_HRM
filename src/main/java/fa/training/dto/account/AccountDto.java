@@ -1,5 +1,10 @@
 package fa.training.dto.account;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -9,6 +14,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.management.relation.Role;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -33,4 +40,6 @@ public class AccountDto {
     private Integer status;
 
     private UUID employeeId;
+
+
 }

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout.html}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work-time History</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body layout:fragment="content" class="bg-gray-100">
+
+<div class="container mx-auto p-5">
+  <h1 class="text-2xl font-bold mb-6 text-center">Worked History</h1>
+
+  <form th:action="@{/timesheet/details}" method="get" class="bg-white p-6 rounded shadow-md mb-5">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label for="accountName" class="block text-lg font-medium text-gray-700 mb-2">Account Name</label>
+        <input type="text" id="accountName" name="accountName" th:value="${accountName}" required class="block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 p-2">
+      </div>
+
+      <div>
+        <label for="month" class="block text-lg font-medium text-gray-700 mb-2">Month</label>
+        <select id="month" name="month" required class="block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 p-2">
+          <option value="" disabled selected>Choose month</option>
+          <option th:each="m : ${months}" th:value="${m}" th:text="${m}"></option>
+        </select>
+      </div>
+
+      <div>
+        <label for="year" class="block text-lg font-medium text-gray-700 mb-2">Year</label>
+        <select id="year" name="year" required class="block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 p-2">
+          <option value="" disabled selected>Choose year</option>
+          <option th:each="y : ${years}" th:value="${y}" th:text="${y}"></option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-4">Fetch</button>
+  </form>
+
+  <table class="min-w-full bg-white border border-gray-300">
+    <thead>
+    <tr>
+      <th class="border-b border-gray-300 px-4 py-2">Day</th>
+      <th class="border-b border-gray-300 px-4 py-2">Check-In Time</th>
+      <th class="border-b border-gray-300 px-4 py-2">Check-Out Time</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="entry : ${history}">
+      <td class="border-b border-gray-300 px-4 py-2" th:text="${entry.date}"></td>
+      <td class="border-b border-gray-300 px-4 py-2" th:text="${entry.checkInTime}"></td>
+      <td class="border-b border-gray-300 px-4 py-2" th:text="${entry.checkOutTime}"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

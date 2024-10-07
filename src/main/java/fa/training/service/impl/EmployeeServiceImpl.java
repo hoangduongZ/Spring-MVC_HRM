@@ -3,19 +3,24 @@ package fa.training.service.impl;
 import fa.training.dto.employee.EmployeeDto;
 import fa.training.entity.Account;
 import fa.training.entity.Employee;
+import fa.training.entity.Role;
 import fa.training.mapper.account.AccountMapper;
 import fa.training.mapper.employee.EmployeeMapper;
 import fa.training.repository.AccountRepository;
 import fa.training.repository.DepartmentRepository;
 import fa.training.repository.EmployeeRepository;
+import fa.training.repository.RoleRepository;
 import fa.training.service.EmployeeService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -24,15 +29,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final DepartmentRepository departmentRepository;
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, ModelMapper modelMapper, DepartmentRepository departmentRepository, AccountRepository accountRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, ModelMapper modelMapper, DepartmentRepository departmentRepository, AccountRepository accountRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.employeeRepository = employeeRepository;
         this.modelMapper = modelMapper;
         this.departmentRepository = departmentRepository;
         this.accountRepository = accountRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional
     @Override
     public EmployeeDto save(EmployeeDto employeeDto) {
         if (employeeDto == null) {
@@ -43,13 +51,24 @@ public class EmployeeServiceImpl implements EmployeeService {
                 () -> new IllegalStateException("Get department Fail !")
         ));
 
-        if (employeeDto.getAccountDto() == null){
+        if (employeeDto.getAccountDto() == null) {
             throw new IllegalStateException("Account info not null");
         }
 
         Account account = AccountMapper.toEntity(employeeDto.getAccountDto());
-        account.setEmployee(employee);
 
+        account.setPassword(passwordEncoder.encode(employeeDto.getAccountDto().getPassword()));
+
+        Role role = roleRepository.findByName("USER");
+        if (role == null) {
+            throw new RuntimeException("Role not exist!");
+        }
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        account.setRoles(roles);
+
+        account.setEmployee(employee);
         employee.setAccount(account);
         Employee savedEmployee = employeeRepository.save(employee);
 
@@ -67,23 +86,23 @@ public class EmployeeServiceImpl implements EmployeeService {
                     criteriaBuilder.like(root.get("firstName"), "%" + keyword + "%"),
                     criteriaBuilder.like(root.get("lastName"), "%" + keyword + "%"));
         };
-        var employees = employeeRepository.findAll(spec,pageable);
+        var employees = employeeRepository.findAll(spec, pageable);
 
         return employees.map(EmployeeMapper::toDto);
     }
 
     @Override
     public EmployeeDto getById(UUID id) {
-        return EmployeeMapper.toDto(employeeRepository.findById(id).orElseThrow(()-> new IllegalStateException("No exist entity")));
+        return EmployeeMapper.toDto(employeeRepository.findById(id).orElseThrow(() -> new IllegalStateException("No exist entity")));
     }
 
     @Override
     public EmployeeDto updateById(UUID id, EmployeeDto employeeDto) {
-        if (id == null){
+        if (id == null) {
             throw new IllegalStateException("Id not exist!");
         }
 
-        Employee employee = employeeRepository.findById(id).orElseThrow(()-> new IllegalStateException("Entity with this id is not exist!"));
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new IllegalStateException("Entity with this id is not exist!"));
 
         employee.setFirstName(employeeDto.getFirstName());
         employee.setLastName(employeeDto.getLastName());

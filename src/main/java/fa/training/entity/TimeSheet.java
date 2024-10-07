@@ -8,44 +8,34 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Entity
+@Table(name = "time_sheet")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "employees")
-public class Employee {
+public class TimeSheet {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String firstName;
-    private String lastName;
 
-    private Integer gender;
-    private LocalDate dob;
-    @Column(nullable = false, length = 20)
-    private String phone;
+    @Column(name = "check_in_time")
+    private LocalDateTime checkInTime;
 
-    private String address;
+    @Column(name = "check_out_time")
+    private LocalDateTime checkOutTime;
+
+    private LocalDate date;
 
     @ManyToOne
-    @JoinColumn(name = "department_id")
-    private Department department;
-
-    private String remark;
-
-    @OneToOne(mappedBy = "employee",cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id")
     private Account account;
 }

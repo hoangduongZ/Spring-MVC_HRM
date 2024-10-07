@@ -29,18 +29,20 @@
 </main>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const sidebarToggle = document.querySelector('[data-collapse-toggle="dropdown"]');
-        const sidebarDropdown = document.querySelector('#dropdown-list');
+        const toggleDropdown = (toggleSelector, dropdownSelector) => {
+            const toggleElement = document.querySelector(toggleSelector);
+            const dropdownElement = document.querySelector(dropdownSelector);
 
-        sidebarToggle.addEventListener('click', () => {
-            sidebarDropdown.classList.toggle('hidden');
-        });
+            if (toggleElement && dropdownElement) {
+                toggleElement.addEventListener('click', () => {
+                    dropdownElement.classList.toggle('hidden');
+                });
+            }
+        };
 
-        const departmentToggle = document.querySelector('[data-collapse-toggle="department-dropdown"]');
-        const departmentDropdown = document.querySelector('#department-dropdown');
-        departmentToggle.addEventListener('click', () => {
-            departmentDropdown.classList.toggle('hidden');
-        });
+        toggleDropdown('[data-collapse-toggle="dropdown"]', '#dropdown-list');
+        toggleDropdown('[data-collapse-toggle="department-dropdown"]', '#department-dropdown');
+        toggleDropdown('[data-collapse-toggle="timesheet-dropdown"]', '#timesheet-dropdown');
     });
 </script>
 <script th:src="@{/js/validate_form.js}"></script>

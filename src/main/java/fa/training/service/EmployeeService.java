@@ -1,7 +1,6 @@
 package fa.training.service;
 
 import fa.training.dto.employee.EmployeeDto;
-import fa.training.entity.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 

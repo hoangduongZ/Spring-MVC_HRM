@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -13,9 +14,9 @@
     </a>
     <div class="action flex *:px-3 *:py-5 text-blue-700 items-center">
       <a href="#!" class="profile hover:bg-slate-300 ">
-        Welcome
+        Welcome <span sec:authentication="name"></span>
       </a>
-      <a href="#!" class="log-out hover:bg-slate-300">
+      <a th:href="@{/logout}" class="log-out hover:bg-slate-300">
         <i class="fa-solid fa-right-from-bracket"></i>
         <span>Logout</span>
       </a>
